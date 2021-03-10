@@ -1,0 +1,24 @@
+{
+  "name": "email-automation-take2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel serve ./src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/damianklick/email-automation-take2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/damianklick/email-automation-take2/issues"
+  },
+  "homepage": "https://github.com/damianklick/email-automation-take2#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3"
+  }
+}
