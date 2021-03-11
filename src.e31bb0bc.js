@@ -118,7 +118,104 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"index.js":[function(require,module,exports) {
-document.getElementById('root').innerHTML = 'Hello world!';
+var textArea = "\n    <button id=\"submit\">Click here</button><br>\n    <div id=\"redirectedUrls\" style=\"width:50%;\" hidden>\n    </div>\n    <div class=\"wrapper\" style=\"width:100%; display:flex;\">\n        <div id=\"responses\" style=\"width:50%;\"></div>\n        <textarea id=\"expected\" style=\"width:50%; height:auto%;\" placeholder=\"expected links\"></textarea>\n    </div>\n    <div id=\"result\" style=\"width:100%;\">\n        <p>RESULTS:</p>\n    </div>\n    </div>";
+document.getElementById('root').innerHTML = textArea, textArea;
+
+var newParagraph = function newParagraph(copy, parentElId) {
+  var text = document.createElement('p');
+  text.classList.add('response__url');
+  var content = document.createTextNode(copy);
+  text.appendChild(content);
+  document.getElementById(parentElId).appendChild(text);
+};
+
+var createActualUrlArr = function createActualUrlArr() {
+  var actualArr = [];
+  document.querySelectorAll('.response__url').forEach(function (el) {
+    actualArr.push(el.innerText);
+  });
+  return actualArr;
+};
+
+var createExpectedUrlArr = function createExpectedUrlArr() {
+  var expectedArr = document.getElementById('expected').value.split('\n');
+  return expectedArr;
+};
+
+window.addEventListener('load', function () {
+  navigator.clipboard.readText().then(function (clipText) {
+    // document.querySelector('#hiddenTextarea').value = clipText;
+    var text = document.createElement('p');
+    text.id = "rawLinks";
+    var content = document.createTextNode(clipText);
+    text.appendChild(content);
+    document.getElementById('redirectedUrls').appendChild(text);
+  }).then(function () {
+    var initalLinks = document.getElementById('rawLinks').innerText;
+    initalLinks = initalLinks.split(',');
+    var allPromises = [];
+    var responseUrls = [];
+    initalLinks.forEach(function (link) {
+      allPromises.push(fetch(link));
+    });
+    console.log(allPromises);
+    Promise.all(allPromises).then(function (responses) {
+      responses.forEach(function (response) {
+        console.log(response.url);
+        responseUrls.push(response.url);
+        newParagraph(response.url, 'responses');
+      });
+    }).catch(console.log('No response received'));
+  });
+});
+document.getElementById('submit').addEventListener('click', function () {
+  var expectedArr = createExpectedUrlArr();
+  var actualArr = createActualUrlArr();
+  console.log(expectedArr);
+  console.log(actualArr);
+  expectedArr.forEach(function (url, index) {
+    newParagraph(url, 'result');
+    newParagraph(actualArr[index], 'result');
+
+    if (url === actualArr[index]) {
+      newParagraph('PASS', 'result');
+    } else {
+      newParagraph('FAIL', 'result');
+    }
+  });
+}); // document.getElementById('submit').addEventListener('click', () => {
+//     let initalLinks = document.getElementById('rawLinks').innerText;
+//     initalLinks = initalLinks.split(',');
+//     let allPromises = [];
+//     let responseUrls = [];
+//     initalLinks.forEach(link => {
+//         allPromises.push(fetch(link));
+//     })
+//     console.log(allPromises);
+//     Promise.all(allPromises)
+//     .then(responses => {
+//         responses.forEach(response => {
+//             console.log(response.url)
+//             responseUrls.push(response.url)
+//             newParagraph(response.url)
+//         })
+//     })
+//     .catch(console.log('No response received'))
+// initalLinks.forEach(link => {
+//     allPromises.push(link);
+// })
+// Promise.all(allPromises.map(url => {
+//     fetch(url)
+//     .then(response => {
+//         responseUrls.push(response.url);
+//         console.log(responseUrls);
+//     })
+//     .catch(console.log('No response received'));
+// }))
+// .then(responses => {
+//     console.log(`URL count: ${responses.length}`)
+// })
+// })
 },{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
