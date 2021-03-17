@@ -49,21 +49,44 @@ window.addEventListener('load', () => {
     ).then(() => {
         let initalLinks = document.getElementById('rawLinks').innerText;
         initalLinks = initalLinks.split(',');
+        let linksObj = {};
+        let allLinks = [];
+
+        initalLinks.forEach((link, index) => {
+            if(index === 0 || index % 2 === 0) {
+                linksObj.name = link;
+            }
+            else {
+                linksObj.ogUrl = link;
+                allLinks.push(linksObj);
+                linksObj = {}
+            }
+        })
+
         let allPromises = [];
         var responseUrls = [];
-        initalLinks.forEach(link => {
-            allPromises.push(fetch(link));
+        allLinks.forEach(link => {
+            allPromises.push(fetch(link.ogUrl));
         })
         console.log(allPromises);
         Promise.all(allPromises)
         .then(responses => {
-            responses.forEach(response => {
-                console.log(response.url)
+            responses.forEach((response, index) => {
+                // console.log(response.url)
                 responseUrls.push(response.url)
-                newParagraph(response.url, 'responses')
+                allLinks[index].responseStatus = response.status;
+                allLinks[index].responseUrl = response.url;
+                allLinks[index].baseUrl = allLinks[index].responseUrl.split('?')[0];
+                if(allLinks[index].responseUrl.split('?')[1] === undefined) {
+                    allLinks[index].utmParams = 'noParams';
+                }
+                else {
+                    allLinks[index].utmParams = allLinks[index].responseUrl.split('?')[1];
+                }
             })
+            console.log(allLinks);
         })
-        .catch(console.log('No response received'))
+        .catch(error => console.log(`error: ${error}`));
     })
 })
 

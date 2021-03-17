@@ -3,7 +3,13 @@
     var allLinks = document.querySelectorAll('a');
     
     allLinks.forEach(link => {
-        if(!link.href.includes('google') && !link.text.includes('1-8') && !link.text.includes('@') && link.text !== '') {
+        if(!link.href.includes('google') && link.text !== '' && !link.href.includes('mailto') && !link.href.includes('tel')) {
+            if(link.children.length > 0) {
+                targetLinks.push(link.children[0].alt);
+            }
+            else {
+                targetLinks.push(link.innerText);
+            }
             targetLinks.push(link.href);
         }
     })
